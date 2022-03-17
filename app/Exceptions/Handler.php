@@ -2,11 +2,15 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\ApiResponseTrait;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponseTrait;
     /**
      * A list of the exception types that are not reported.
      *
@@ -37,5 +41,17 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return $this->apiResponse('', 'Unauthenticated', false, 401);
+        }
+    }
+
+    protected function invalidJson($request, ValidationException $exception): \Illuminate\Http\JsonResponse
+    {
+        return $this->apiResponse('', $exception->errors(), false, 422);
     }
 }
