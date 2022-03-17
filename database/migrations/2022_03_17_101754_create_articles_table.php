@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
             $table->unsignedBigInteger('category_id');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->bigInteger('views')->default(0);
             $table->timestamps();
         });
